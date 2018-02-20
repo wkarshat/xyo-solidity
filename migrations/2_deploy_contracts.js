@@ -1,5 +1,8 @@
-var XYExample = artifacts.require("./XYExample.sol");
+var SafeMath = artifacts.require("./SafeMath.sol");
+var XY = artifacts.require("./XY.sol");
 
-module.exports = function (deployer) {
-  deployer.deploy(XYExample);
+module.exports = function(deployer) {
+  deployer.deploy(SafeMath);
+  deployer.link(SafeMath, XY);
+  deployer.deploy(XY);
 };
