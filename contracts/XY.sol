@@ -22,10 +22,12 @@ contract XY {
     // Stores an internal mapping of xyoAddresses to answers
     mapping (address => Answer) answeredQueries;
 
-    event AnswerReceived(address divinerAddress, string lat, string long);
+    event QueryReceived(uint xyoValue, address xyoAddress, string accuracy);
+    event AnswerReceived(address divinerAddress, string lat, string lng);
 
     function publishQuery(uint _xyoValue, address _xyoAddress, string _accuracy) public returns(PendingQuery) {
         require(_xyoValue > 0);
+        QueryReceived(_xyoValue, _xyoAddress, _accuracy);
         return pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy);
     }
 
@@ -35,5 +37,7 @@ contract XY {
        }
        return false;
     }
-     // Receive query function from oracle that receives an answer
+
+    // Receive query function from oracle that receives an answer
+    // TODO: Implement
 }

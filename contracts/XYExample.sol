@@ -17,14 +17,21 @@ contract XYExample is XY, Ownable {
 
     mapping (address => Package) public packages;
 
+    // Orders and stores a package with an xyoAddress in this contract and
+    // transfers the balance to this XYExample contract
+    function orderPackage(address _xyoAddress) public payable returns(uint) {
+        // TODO: implement
+    }
+
     // Tracks a packge by publishing a pending query to the XYO Contract that will
-    // be answered by trusted diviner oracles from the XYO Network
-    function trackPackage() view public returns(Answer) {
+    // be answered by trusted diviner oracles from the XYO Network with a certain accuracy
+    // threshold
+    function trackPackage(string _accuracyThreshold) public payable {
         // If we still have a pending query then we return nothing
         if (hasPendingQuery()) {
             return;
         }
-        // fetch package, get its xyoAddress and fetch its answer
-        return answeredQueries[packages[msg.sender].xyoAddress];
+        publishQuery(msg.value, packages[msg.sender].xyoAddress, _accuracyThreshold);
+        return;
     }
 }
