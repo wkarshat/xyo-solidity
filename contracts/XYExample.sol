@@ -24,7 +24,7 @@ contract XYExample is XY, Ownable {
         require(_xyoAddress != address(0));
         numPackages = numPackages + 1;
         // transfers the payment to the owner contract
-        this.balance = msg.value;
+        owner.transfer(msg.value);
         packages[msg.sender] = Package(numPackages, _xyoAddress, ShippingStatus.Paid);
         return numPackages;
     }
