@@ -6,10 +6,18 @@ import "../contracts/XY.sol";
 
 contract TestXY {
 
-  function testInitialBalanceUsingDeployedContract() public {
+  function testHasPendingQuery() public {
+    XY xy = XY(DeployedAddresses.XY());
+    Assert.equal(xy.hasPendingQuery(), false, 'owner should not have pending query');
+  }
 
-    uint expected = 10000;
-    Assert.equal(10000, expected, "Owner should have 10000 MetaCoin initially");
+  function testPublishQuery() public {
+    XY xy = XY(DeployedAddresses.XY());
+    uint xyoValue = 5;
+    address xyoAddress = tx.origin;
+    uint accuracy = 90;
+    xy.publishQuery(xyoValue, xyoAddress, accuracy);
+    Assert.equal(xy.hasPendingQuery(), true, 'owner should have pending query');
   }
 
 

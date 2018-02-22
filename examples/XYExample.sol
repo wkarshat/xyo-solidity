@@ -4,7 +4,7 @@ import './XY.sol';
 import './Ownable.sol';
 import './SafeMath.sol';
 
-contract XYExample is XY, Ownable {
+contract XYExample is Ownable {
     using SafeMath for *;
 
     enum ShippingStatus { Paid, Shipped, Delivered }
@@ -31,13 +31,15 @@ contract XYExample is XY, Ownable {
 
     // Tracks a packge by publishing a pending query to the XYO Contract that will
     // be answered by trusted diviner oracles from the XYO Network with a certain accuracy
-    // threshold
-    function trackPackage(string _accuracyThreshold) public payable {
+    // threshold. Returns false if package is pending, true otherwise.
+    function trackPackage(string _accuracyThreshold) public payable returns(bool) {
+        // Creates an XY instance with the XYO contract address
+        XY xy = XY(/* Deployed XY Address */)
         // If we still have a pending query then we return nothing
-        if (hasPendingQuery()) {
-            return;
+        if (xy.hasPendingQuery()) {
+            return false;
         }
-        publishQuery(msg.value, packages[msg.sender].xyoAddress, _accuracyThreshold);
-        return;
+        xy.publishQuery(msg.value, packages[msg.sender].xyoAddress, _accuracyThreshold);
+        return true;
     }
 }
