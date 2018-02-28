@@ -4,7 +4,7 @@
  * @Email:  developer@xyfindables.com
  * @Filename: index.js
  * @Last modified by:   arietrouw
- * @Last modified time: Wednesday, February 28, 2018 1:49 PM
+ * @Last modified time: Wednesday, February 28, 2018 2:56 PM
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
@@ -15,39 +15,34 @@ let debug = require('debug')('xyo-solidity'),
   SOLC = require('solc');
 
 class Contracts {
-  load(source, contractName) {
-    let filename, findImports, input, output;
+  load(filename, contractName) {
+    debug('load');
+    let findImports, input, output;
 
-    filename = `${source}.sol`;
     input = {};
-    input[filename] = source;
+    input[filename] = this.get(filename);
+
+    debug('input: ', input);
 
     findImports = (path) => {
-      if (path === 'source.sol') {
-        return {
-          contents: this.get(path)
-        };
-      } else {
-        return {
-          error: 'File not found'
-        };
-      }
+      debug('findImports: ', path);
+      return {
+        contents: this.get(path)
+      };
     };
 
     output = SOLC.compile({
       sources: input
     }, 1, findImports);
 
+    debug("output: ", output);
+
     return output.contracts[`${filename}:${contractName}`];
   }
 
-  get(name) {
-    fs.readFile(`${__dirname}${name}`, (error, data) => {
-      if (error) {
-        throw error;
-      }
-      return data.toString();
-    });
+  get(fileName) {
+    debug('get: ', fileName);
+    return fs.readFileSync(`${__dirname}/contracts/${fileName}`).toString();
   }
 }
 
