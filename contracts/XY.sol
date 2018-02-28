@@ -9,12 +9,17 @@ contract XY {
         uint xyoValue;
         address xyoAddress;
         uint accuracyThreshold;
+        uint certaintyThresold;
+        uint minimumDelay;
+        uint epoch;
     }
 
     struct Answer {
         string accuracyScore;
+        string certaintyScore;
         string lat;
         string lng;
+        string alt;
     }
 
     // Stores an internal mapping of pending queries
@@ -22,13 +27,13 @@ contract XY {
     // Stores an internal mapping of xyoAddresses to answers
     mapping (address => Answer) answeredQueries;
 
-    event QueryReceived(uint xyoValue, address xyoAddress, uint accuracy);
+    event QueryReceived(uint xyoValue, address xyoAddress, uint accuracy, uint certainty, uint delay, uint epoch);
     event AnswerReceived(address divinerAddress, string lat, string lng);
 
-    function publishQuery(uint _xyoValue, address _xyoAddress, uint _accuracy) public returns(bool) {
+    function publishQuery(uint _xyoValue, address _xyoAddress, uint _accuracy, uint _certainty, uint _delay, uint _epoch) public returns(bool) {
         require(_xyoValue > 0);
-        QueryReceived(_xyoValue, _xyoAddress, _accuracy);
-        pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy);
+        QueryReceived(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
+        pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
         return true;
     }
 
