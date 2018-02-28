@@ -1,6 +1,6 @@
 {
   "name": "xyo-solidity",
-  "version": "0.0.3",
+  "version": "^0.0.4",
   "description": "Library toolkit for developing dApps connected to the XY Oracle Network. Users can subscribe to webhooks for event listeners from the XY contract using https://if-eth.com.",
   "main": "index.js",
   "directories": {
