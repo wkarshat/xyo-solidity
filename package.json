@@ -14,9 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/XYOracleNetwork/xyo-solidity.git"
   },
-  "keywords": [],
+  "keywords": ["xyo", "xy", "oracle", "bitcoin", "eth", "ethereum", "location"],
   "author": "",
-  "license": "ISC",
+  "license": "GNU",
   "bugs": {
     "url": "https://github.com/XYOracleNetwork/xyo-solidity/issues"
   },
