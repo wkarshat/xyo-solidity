@@ -32,14 +32,19 @@ contract XYExample is Ownable {
     // Tracks a packge by publishing a pending query to the XYO Contract that will
     // be answered by trusted diviner oracles from the XYO Network with a certain accuracy
     // threshold. Returns false if package is pending, true otherwise.
-    function trackPackage(string _accuracyThreshold) public payable returns(bool) {
+    function trackPackage(
+        string _accuracyThreshold,
+        string _certaintyThreshold,
+        string _certaintyThreshold,
+        string _delay,
+        string _epoch) public payable returns(bool) {
         // Creates an XY instance with the XYO contract address
         XY xy = XY(/* Deployed XY Address */)
         // If we still have a pending query then we return nothing
         if (xy.hasPendingQuery()) {
             return false;
         }
-        xy.publishQuery(msg.value, packages[msg.sender].xyoAddress, _accuracyThreshold);
+        xy.publishQuery(msg.value, packages[msg.sender].xyoAddress, _accuracyThreshold, _certaintyThreshold, _delay, _epoch);
         return true;
     }
 }
