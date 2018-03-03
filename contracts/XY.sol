@@ -15,25 +15,37 @@ contract XY {
     }
 
     struct Answer {
-        string accuracyScore;
-        string certaintyScore;
-        string lat;
-        string lng;
-        string alt;
+        address xyoAddress;
+        int latitude;
+        int longitude;
+        int altitude;
+        uint accuracy;
+        uint certainty;
+        uint epoch;
     }
 
-    // Stores an internal mapping of pending queries
-    mapping (address => PendingQuery) pendingQueries;
-    // Stores an internal mapping of xyoAddresses to answers
-    mapping (address => Answer) answeredQueries;
+    // Stores a mapping of pending queries
+    mapping (address => PendingQuery) public pendingQueries;
+    // Stores a mapping of xyoAddresses to answers
+    mapping (address => Answer) public answeredQueries;
+    address[] public answerList;
 
     event QueryReceived(uint xyoValue, address xyoAddress, uint accuracy, uint certainty, uint delay, uint epoch);
-    event AnswerReceived(address divinerAddress, string lat, string lng);
+    event AnswerReceived(address xyoAddress, int latitude, int longitude, int altitude, uint accuracy, uint certainty, uint epoch);
 
     function publishQuery(uint _xyoValue, address _xyoAddress, uint _accuracy, uint _certainty, uint _delay, uint _epoch) public returns(bool) {
         require(_xyoValue > 0);
         QueryReceived(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
         pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
+        return true;
+    }
+
+    function publishAnswer(address _xyoAddress, int _latitude, int _longitude, int _altitude, uint _accuracy, uint _certainty, uint _epoch) public returns(bool) {
+        // TODO: Have to verify before returning
+        AnswerReceived(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
+        answeredQueries[_xyoAddress] = Answer(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
+        answerList.push(_xyoAddress);
+        pendingQueries[msg.sender].xyoValue = 0;
         return true;
     }
 
@@ -44,9 +56,4 @@ contract XY {
        return false;
     }
 
-    // Receive an answer to a query from an oracle
-    // TODO: needs to be trusted based on oracle signatures
-    function receiveQuery() public pure returns(bool) {
-      return true;
-    }
 }
