@@ -16,7 +16,11 @@ contract TestXY {
     uint xyoValue = 5;
     address xyoAddress = tx.origin;
     uint accuracy = 90;
-    xy.publishQuery(xyoValue, xyoAddress, accuracy);
+    uint certainty = 90;
+    uint delay = 0;
+    uint epoch = 0;
+    address xynotify = 0;
+    xy.publishQuery(xyoValue, xyoAddress, accuracy, certainty, delay, epoch, xynotify);
     Assert.equal(xy.hasPendingQuery(), true, 'owner should have pending query');
   }
 
