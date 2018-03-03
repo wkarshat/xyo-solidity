@@ -2,6 +2,12 @@ pragma solidity ^0.4.2;
 
 import './SafeMath.sol';
 
+
+interface XYNotify {
+    function answer(address xyoAddress, int latitude, int longitude, int altitude, uint accuracy, uint certainty, uint epoch) external;
+}
+
+
 contract XY {
     using SafeMath for *;
 
@@ -12,6 +18,7 @@ contract XY {
         uint certaintyThresold;
         uint minimumDelay;
         uint epoch;
+        address xynotify;
     }
 
     struct Answer {
@@ -33,19 +40,23 @@ contract XY {
     event QueryReceived(uint xyoValue, address xyoAddress, uint accuracy, uint certainty, uint delay, uint epoch);
     event AnswerReceived(address xyoAddress, int latitude, int longitude, int altitude, uint accuracy, uint certainty, uint epoch);
 
-    function publishQuery(uint _xyoValue, address _xyoAddress, uint _accuracy, uint _certainty, uint _delay, uint _epoch) public returns(bool) {
+    function publishQuery(uint _xyoValue, address _xyoAddress, uint _accuracy, uint _certainty, uint _delay, uint _epoch, address _xynotify) public returns(bool) {
         require(_xyoValue > 0);
+        pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch, _xynotify);
         QueryReceived(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
-        pendingQueries[msg.sender] = PendingQuery(_xyoValue, _xyoAddress, _accuracy, _certainty, _delay, _epoch);
         return true;
     }
 
+    // this is how a diviner sets the answer.  Need to implement the origin proof
     function publishAnswer(address _xyoAddress, int _latitude, int _longitude, int _altitude, uint _accuracy, uint _certainty, uint _epoch) public returns(bool) {
         // TODO: Have to verify before returning
-        AnswerReceived(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
         answeredQueries[_xyoAddress] = Answer(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
         answerList.push(_xyoAddress);
         pendingQueries[msg.sender].xyoValue = 0;
+        if (pendingQueries[msg.sender].xynotify != 0) {
+            XYNotify(pendingQueries[msg.sender].xynotify).answer(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
+        }
+        AnswerReceived(_xyoAddress, _latitude, _longitude, _altitude, _accuracy, _certainty, _epoch);
         return true;
     }
 
@@ -54,19 +65,6 @@ contract XY {
            return true;
        }
        return false;
-    }
-
-
-    // Receive an answer to a query from an oracle
-    // TODO: needs to be trusted based on oracle signatures
-    function receiveQuery() public pure returns(bool) {
-    
-      if (/*Oracle is trusted*/) {
-        delete(pendingQueries[/*address of query*/];
-        emit AnswerReceived(/* answers from query */]);
-      }
-      
-      return true;
     }
 
 }
