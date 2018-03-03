@@ -56,4 +56,17 @@ contract XY {
        return false;
     }
 
+
+    // Receive an answer to a query from an oracle
+    // TODO: needs to be trusted based on oracle signatures
+    function receiveQuery() public pure returns(bool) {
+    
+      if (/*Oracle is trusted*/) {
+        delete(pendingQueries[/*address of query*/];
+        emit AnswerReceived(/* answers from query */]);
+      }
+      
+      return true;
+    }
+
 }
